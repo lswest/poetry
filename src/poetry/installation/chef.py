@@ -4,6 +4,7 @@ import tempfile
 
 from pathlib import Path
 from typing import TYPE_CHECKING
+from typing import Union
 
 from build import BuildBackendException
 from poetry.core.utils.helpers import temporary_directory
@@ -32,21 +33,23 @@ class Chef:
         self._artifact_cache = artifact_cache
 
     def prepare(
-        self, archive: Path, output_dir: Path | None = None, *, editable: bool = False
+        self, archive: Path, output_dir: Path | None = None, *, editable: bool = False, config_settings: Union[dict, None] = None
     ) -> Path:
         if not self._should_prepare(archive):
             return archive
 
         if archive.is_dir():
             destination = output_dir or Path(tempfile.mkdtemp(prefix="poetry-chef-"))
-            return self._prepare(archive, destination=destination, editable=editable)
+            return self._prepare(archive, destination=destination, editable=editable, config_settings=config_settings)
 
         return self._prepare_sdist(archive, destination=output_dir)
 
     def _prepare(
-        self, directory: Path, destination: Path, *, editable: bool = False
+        self, directory: Path, destination: Path, *, editable: bool = False, config_settings: Union[dict, None] = None
     ) -> Path:
         from subprocess import CalledProcessError
+
+        config_settings = config_settings if config_settings is not None else {}
 
         distribution = "wheel" if not editable else "editable"
         error: Exception | None = None
@@ -62,6 +65,7 @@ class Chef:
                     builder.build(
                         distribution,
                         destination.as_posix(),
+                        config_settings=config_settings
                     )
                 )
         except BuildBackendException as e:

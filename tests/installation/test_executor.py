@@ -11,6 +11,7 @@ from subprocess import CalledProcessError
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Callable
+from typing import Union
 
 import pytest
 
@@ -73,7 +74,7 @@ class Chef(BaseChef):
         return super()._prepare_sdist(archive)
 
     def _prepare(
-        self, directory: Path, destination: Path, *, editable: bool = False
+        self, directory: Path, destination: Path, *, editable: bool = False, config_settings: Union[dict, None] = None
     ) -> Path:
         if self._directory_wheels is not None:
             wheel = self._directory_wheels.pop(0)
@@ -84,7 +85,7 @@ class Chef(BaseChef):
             shutil.copyfile(wheel, dst_wheel)
             return dst_wheel
 
-        return super()._prepare(directory, destination, editable=editable)
+        return super()._prepare(directory, destination, editable=editable, config_settings=config_settings)
 
 
 @pytest.fixture
@@ -242,8 +243,8 @@ Package operations: 4 installs, 2 updates, 1 removal
 
     assert prepare_spy.call_count == 2
     assert prepare_spy.call_args_list == [
-        mocker.call(chef, mocker.ANY, destination=mocker.ANY, editable=False),
-        mocker.call(chef, mocker.ANY, destination=mocker.ANY, editable=True),
+        mocker.call(chef, mocker.ANY, destination=mocker.ANY, editable=False, config_settings=None),
+        mocker.call(chef, mocker.ANY, destination=mocker.ANY, editable=True, config_settings=None),
     ]
 
 
@@ -747,6 +748,7 @@ def test_executor_should_write_pep610_url_references_for_directories(
     assert not prepare_spy.spy_return.exists(), "archive not cleaned up"
 
 
+@pytest.mark.parametrize("strict", [True, False])
 def test_executor_should_write_pep610_url_references_for_editable_directories(
     tmp_venv: VirtualEnv,
     pool: RepositoryPool,
@@ -756,6 +758,7 @@ def test_executor_should_write_pep610_url_references_for_editable_directories(
     wheel: Path,
     fixture_dir: FixtureDirGetter,
     mocker: MockerFixture,
+    strict: bool
 ) -> None:
     url = (fixture_dir("git") / "github.com" / "demo" / "demo").resolve()
     package = Package(
@@ -765,6 +768,9 @@ def test_executor_should_write_pep610_url_references_for_editable_directories(
         source_url=url.as_posix(),
         develop=True,
     )
+
+    if strict:
+        config.merge({"config_settings": {"editable_mode": "strict"}})
 
     chef = Chef(artifact_cache, tmp_venv, Factory.create_pool(config))
     chef.set_directory_wheel(wheel)

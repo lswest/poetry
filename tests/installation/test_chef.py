@@ -113,7 +113,7 @@ def test_prepare_directory_editable(
     )
     archive = fixture_dir("simple_project").resolve()
 
-    wheel = chef.prepare(archive, editable=True)
+    wheel = chef.prepare(archive, editable=True, config_settings={"editable_mode": "strict"})
 
     assert wheel.parent.parent == Path(tempfile.gettempdir())
     assert wheel.name == "simple_project-1.2.3-py2.py3-none-any.whl"

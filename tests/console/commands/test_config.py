@@ -55,6 +55,7 @@ def test_list_displays_default_value_if_not_set(
     venv_path = json.dumps(os.path.join("{cache-dir}", "virtualenvs"))
     expected = f"""cache-dir = {cache_dir}
 experimental.system-git-client = false
+installer.config-settings = null
 installer.max-workers = null
 installer.modern-installation = true
 installer.no-binary = null
@@ -88,6 +89,7 @@ def test_list_displays_set_get_setting(
     venv_path = json.dumps(os.path.join("{cache-dir}", "virtualenvs"))
     expected = f"""cache-dir = {cache_dir}
 experimental.system-git-client = false
+installer.config-settings = null
 installer.max-workers = null
 installer.modern-installation = true
 installer.no-binary = null
@@ -142,6 +144,7 @@ def test_unset_setting(
     venv_path = json.dumps(os.path.join("{cache-dir}", "virtualenvs"))
     expected = f"""cache-dir = {cache_dir}
 experimental.system-git-client = false
+installer.config-settings = null
 installer.max-workers = null
 installer.modern-installation = true
 installer.no-binary = null
@@ -174,6 +177,7 @@ def test_unset_repo_setting(
     venv_path = json.dumps(os.path.join("{cache-dir}", "virtualenvs"))
     expected = f"""cache-dir = {cache_dir}
 experimental.system-git-client = false
+installer.config-settings = null
 installer.max-workers = null
 installer.modern-installation = true
 installer.no-binary = null
@@ -304,6 +308,7 @@ def test_list_displays_set_get_local_setting(
     venv_path = json.dumps(os.path.join("{cache-dir}", "virtualenvs"))
     expected = f"""cache-dir = {cache_dir}
 experimental.system-git-client = false
+installer.config-settings = null
 installer.max-workers = null
 installer.modern-installation = true
 installer.no-binary = null
@@ -344,6 +349,7 @@ def test_list_must_not_display_sources_from_pyproject_toml(
     venv_path = json.dumps(os.path.join("{cache-dir}", "virtualenvs"))
     expected = f"""cache-dir = {cache_dir}
 experimental.system-git-client = false
+installer.config-settings = null
 installer.max-workers = null
 installer.modern-installation = true
 installer.no-binary = null

@@ -80,6 +80,8 @@ class Executor:
                 "<warning>See https://github.com/python-poetry/poetry/issues/8987.</>"
             )
 
+        self._config_settings = config.get("installer.config_settings")
+
         if parallel is None:
             parallel = config.get("installer.parallel", True)
 
@@ -618,7 +620,7 @@ class Executor:
         self._populate_hashes_dict(archive, package)
 
         return self._chef.prepare(
-            archive, editable=package.develop, output_dir=output_dir
+            archive, editable=package.develop, output_dir=output_dir, config_settings=self._config_settings
         )
 
     def _prepare_git_archive(self, operation: Install | Update) -> Path:

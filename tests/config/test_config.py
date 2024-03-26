@@ -34,7 +34,7 @@ def get_options_based_on_normalizer(normalizer: Normalizer) -> Iterator[str]:
 
 
 @pytest.mark.parametrize(
-    ("name", "value"), [("installer.parallel", True), ("virtualenvs.create", True)]
+    ("name", "value"), [("installer.parallel", True), ("virtualenvs.create", True), ("installer.config-settings", None)]
 )
 def test_config_get_default_value(config: Config, name: str, value: bool) -> None:
     assert config.get(name) is value
@@ -112,3 +112,9 @@ def test_disabled_keyring_is_unavailable(
     config.config["keyring"]["enabled"] = False
     manager = PasswordManager(config)
     assert not manager.use_keyring
+
+
+def test_config_settings(config: Config) -> None:
+    config.merge(
+        {"installer": {"config-settings": {"editable_mode": "strict"}}})
+    assert config.get("installer.config-settings.editable_mode") == "strict"

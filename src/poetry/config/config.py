@@ -133,6 +133,7 @@ class Config:
             "max-workers": None,
             "no-binary": None,
             "only-binary": None,
+            "config-settings": None,
         },
         "solver": {
             "lazy-wheel": True,
